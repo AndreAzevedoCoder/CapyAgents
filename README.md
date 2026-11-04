@@ -46,6 +46,21 @@ Durante a execução você verá: pedidos de permissão dos devs ao reviewer (co
 
 Para conferir o motor de permissões: clique em um dev e peça no chat "leia o arquivo .env". A chamada é **bloqueada no backend** (nunca pelo prompt) e registrada nos logs com o motivo.
 
+## Vários projetos
+
+A plataforma é um motor reutilizável: por padrão roda a demo embutida, mas você
+pode apontá-la para outro projeto (com seus próprios `agents/`, `pipelines/` e
+`config/`) pela variável `AGENT_OFFICE_PROJECT`:
+
+```bash
+AGENT_OFFICE_PROJECT=/caminho/do/projeto npm run dev
+```
+
+Nesse modo, os agentes rodam com o diretório de trabalho na raiz do projeto
+(configurável em `config/project.json` com `{ "work_dir": "." }`), o histórico
+(SQLite) e os artefatos ficam dentro do projeto, e os assets 3D (capivara,
+chapéus) continuam vindo da plataforma.
+
 ## Como funciona
 
 ```
@@ -137,7 +152,7 @@ Agentes, mensagens, tarefas, logs, reuniões e execuções ficam em SQLite (`dat
 
 ## Interface
 
-- **Clique em um agente**: painel com nome, modelo, chapéu, estado, tarefa, logs em tempo real (filtros: raciocínio, ferramentas, mensagens, permissões, erros), chat direto, pedidos pendentes e botões de pausar/retomar/encerrar.
+- **Clique em um agente**: a câmera vai até a frente dele, em três quartos, para mostrar o rosto, e o acompanha se ele caminhar; clicar fora volta à vista geral. Abre também o painel com nome, modelo, chapéu, estado, tarefa, logs em tempo real (filtros: raciocínio, ferramentas, mensagens, permissões, erros), chat direto, pedidos pendentes e botões de pausar/retomar/encerrar.
 - Mensagens enviadas enquanto o agente trabalha entram na fila e são entregues no próximo ponto seguro.
 - **Chapéus**: cada agente usa o mesmo modelo 3D; o chapéu diferencia. Troque pelo painel do agente. Para adicionar um chapéu, solte um `.glb` em `assets/hats/` e (opcional) ajuste posição/rotação/escala em `assets/hats/hats.json`.
 

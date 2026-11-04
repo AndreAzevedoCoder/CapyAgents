@@ -31,7 +31,9 @@ export function App() {
         <AgentPanel />
         <Approvals />
         <Toasts />
-        <div className="hint">arraste para orbitar · scroll para zoom · clique em um agente</div>
+        <div className="hint">
+          arraste para orbitar · scroll para zoom · clique num agente para focar, fora para voltar
+        </div>
       </div>
       <AgentEditor />
       <MeetingModal />

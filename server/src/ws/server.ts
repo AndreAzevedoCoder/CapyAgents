@@ -13,7 +13,7 @@ import type { MeetingService } from '../meetings/meetings.js';
 import { saveAgent, deleteAgent, loadAgents } from '../agents/registry.js';
 import type { ModelInfo } from '@agent-office/shared';
 import { listHats } from '../http/hats.js';
-import { ASSETS_DIR, HOST, PORT, ROOT_DIR } from '../env.js';
+import { ASSETS_DIR, HOST, PORT, REPO_DIR } from '../env.js';
 
 export interface AppContext {
   db: Db;
@@ -49,7 +49,7 @@ function serveFile(res: http.ServerResponse, file: string): boolean {
 }
 
 export function startServer(ctx: AppContext): http.Server {
-  const webDist = path.join(ROOT_DIR, 'web', 'dist');
+  const webDist = path.join(REPO_DIR, 'web', 'dist');
 
   const server = http.createServer((req, res) => {
     const url = (req.url ?? '/').split('?')[0];

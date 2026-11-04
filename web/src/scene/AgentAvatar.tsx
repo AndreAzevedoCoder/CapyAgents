@@ -11,7 +11,16 @@ import { spotFor } from './positions';
 /** Posições atuais dos avatares (compartilhadas com as linhas de interação). */
 export const avatarPositions = new Map<string, THREE.Vector3>();
 
+/** Para onde cada avatar está virado (rotação Y), usado pela câmera de foco. */
+export const avatarHeadings = new Map<string, number>();
+
+/** Chapéus desenham acima da cena (ordem 5) e abaixo das placas de nome (10+). */
+const HAT_RENDER_ORDER = 5;
+
 const WALK_SPEED = 3.2; // unidades/s — reflete eventos reais, nunca é decorativo
+
+/** Distância em que a placa de nome tem escala 1 (vista geral do escritório). */
+const NAMETAG_REFERENCE_DISTANCE = 22;
 
 /**
  * Placa de nome/status no estilo Minecraft: painel escuro semitransparente com
@@ -36,8 +45,20 @@ function Nametag({
   const bottom = queued > 0 ? `${label} · ✉${queued}` : label;
   const chars = Math.max(id.length, bottom.length);
   const width = chars * 0.142 + 0.34;
+
+  // tamanho aparente ~constante na tela: encolhe quando a câmera se aproxima
+  // (ao focar num agente) e cresce de longe, continuando legível
+  const group = useRef<THREE.Group>(null);
+  const worldPos = useMemo(() => new THREE.Vector3(), []);
+  useFrame(({ camera }) => {
+    const g = group.current;
+    if (!g) return;
+    const d = camera.position.distanceTo(g.getWorldPosition(worldPos));
+    g.scale.setScalar(THREE.MathUtils.clamp(d / NAMETAG_REFERENCE_DISTANCE, 0.3, 1.7));
+  });
+
   return (
-    <Billboard position={[0, y, 0]}>
+    <Billboard ref={group} position={[0, y, 0]}>
       {/* painel escuro translúcido */}
       <mesh renderOrder={10}>
         <planeGeometry args={[width, 0.66]} />
@@ -93,7 +114,21 @@ function Hat({
   const gltf = useGLTF(`${API_BASE}/assets/${hat.file}`);
   const cloned = useMemo(() => {
     // clona a hierarquia, mas compartilha geometria e material
-    return gltf.scene.clone(true);
+    const root = gltf.scene.clone(true);
+    // O chapéu tem prioridade de renderização: desenha depois da capivara e
+    // sem teste de profundidade, então a cabeça nunca atravessa a copa — é o
+    // que permite assentar um chapéu pequeno baixo, encaixado no crânio.
+    root.traverse((obj) => {
+      const mesh = obj as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      mesh.renderOrder = HAT_RENDER_ORDER;
+      for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        mat.depthTest = false;
+        mat.depthWrite = false;
+        mat.needsUpdate = true;
+      }
+    });
+    return root;
   }, [gltf]);
   // chapéus foram modelados para cabeça de raio ~0.5; cobrem a largura da cabeça
   const fit = width * 0.48;
@@ -160,6 +195,7 @@ export function AgentAvatar({
     g.rotation.y = a + diff * Math.min(1, dt * 8);
 
     avatarPositions.set(info.id, g.position);
+    avatarHeadings.set(info.id, g.rotation.y);
 
     // animação procedural (o GLB não tem esqueleto); fase por agente p/ dessincronizar
     const ph = phase.current;

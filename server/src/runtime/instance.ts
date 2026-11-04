@@ -13,7 +13,7 @@ import { insertLog, recordUsage, saveInstance } from '../db/database.js';
 import type { MessageBus } from '../bus/bus.js';
 import { checkToolUse, expandToolGroups } from '../permissions/engine.js';
 import { computeCost } from '../cost/cost.js';
-import { agentEnv, ROOT_DIR, WORKSPACE_DIR } from '../env.js';
+import { agentEnv, ROOT_DIR, WORK_DIR } from '../env.js';
 import type { LogKind } from '@agent-office/shared';
 
 export interface InstanceDeps {
@@ -92,7 +92,7 @@ export class AgentInstance {
     this.deskIndex = deskIndex;
     this.hat = def.config.hat;
     // sem worktree, o agente trabalha no workspace (nunca na raiz do repo)
-    this.workdir = workdir ?? WORKSPACE_DIR;
+    this.workdir = workdir ?? WORK_DIR;
   }
 
   get agentName(): string {
@@ -128,7 +128,7 @@ export class AgentInstance {
       tokensOut: this.tokensOut,
       costUsd: this.costUsd,
       queuedMessages: this.queue.length,
-      workdir: this.workdir === WORKSPACE_DIR ? null : this.workdir,
+      workdir: this.workdir === WORK_DIR ? null : this.workdir,
     };
   }
 

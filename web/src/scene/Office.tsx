@@ -36,14 +36,22 @@ function Desk({ index, busy }: { index: number; busy: boolean }) {
           <meshStandardMaterial color="#c3c7cc" metalness={0.5} roughness={0.5} />
         </mesh>
         {/* área do teclado (recuo escuro) */}
-        <mesh position={[0, 0.039, 0.09]}>
-          <boxGeometry args={[0.6, 0.006, 0.3]} />
+        <mesh position={[0, 0.039, 0.07]}>
+          <boxGeometry args={[0.6, 0.006, 0.26]} />
           <meshStandardMaterial color="#2b2e33" roughness={0.8} />
         </mesh>
-        {/* trackpad */}
-        <mesh position={[0, 0.04, 0.22]}>
-          <boxGeometry args={[0.18, 0.004, 0.08]} />
-          <meshStandardMaterial color="#9aa0a7" roughness={0.6} />
+        {/* Trackpad: fica logo acima do plano do teclado (se ficar na mesma
+            altura, as duas faces disputam a mesma profundidade e piscam) e usa
+            polygonOffset para vencer sempre o tampo em que está encostado. */}
+        <mesh position={[0, 0.0445, 0.235]}>
+          <boxGeometry args={[0.18, 0.005, 0.09]} />
+          <meshStandardMaterial
+            color="#9aa0a7"
+            roughness={0.6}
+            polygonOffset
+            polygonOffsetFactor={-2}
+            polygonOffsetUnits={-2}
+          />
         </mesh>
         {/* tela com leve inclinação para trás (dobradiça na borda de trás) */}
         <group position={[0, 0.02, -0.16]} rotation={[-0.32, 0, 0]}>

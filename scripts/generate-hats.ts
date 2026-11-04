@@ -73,6 +73,40 @@ function cylinder(
   return { positions, normals, indices };
 }
 
+/** Cúpula (meia-esfera) assentada com a base em y0. */
+function dome(radius: number, y0: number, segments = 24, rings = 10): Mesh {
+  const positions: number[] = [];
+  const normals: number[] = [];
+  const indices: number[] = [];
+  for (let r = 0; r <= rings; r++) {
+    const phi = (r / rings) * (Math.PI / 2); // 0 = base, pi/2 = topo
+    const y = Math.sin(phi) * radius;
+    const rad = Math.cos(phi) * radius;
+    for (let s = 0; s <= segments; s++) {
+      const theta = (s / segments) * Math.PI * 2;
+      const x = Math.cos(theta) * rad;
+      const z = Math.sin(theta) * rad;
+      positions.push(x, y0 + y, z);
+      const n = Math.hypot(x, y, z) || 1;
+      normals.push(x / n, y / n, z / n);
+    }
+  }
+  const row = segments + 1;
+  for (let r = 0; r < rings; r++) {
+    for (let s = 0; s < segments; s++) {
+      const a = r * row + s;
+      indices.push(a, a + 1, a + row, a + 1, a + row + 1, a + row);
+    }
+  }
+  return { positions, normals, indices };
+}
+
+/** Desloca uma malha no espaço (os chapéus são compostos centrados na origem). */
+function translate(m: Mesh, dx: number, dy: number, dz: number): Mesh {
+  const positions = m.positions.map((v, i) => v + [dx, dy, dz][i % 3]);
+  return { positions, normals: m.normals, indices: m.indices };
+}
+
 function mergeMeshes(meshes: Mesh[]): Mesh {
   const out: Mesh = { positions: [], normals: [], indices: [] };
   for (const m of meshes) {
@@ -84,7 +118,12 @@ function mergeMeshes(meshes: Mesh[]): Mesh {
   return out;
 }
 
-async function writeHat(name: string, color: [number, number, number], mesh: Mesh): Promise<void> {
+async function writeHat(
+  name: string,
+  color: [number, number, number],
+  mesh: Mesh,
+  emissive?: [number, number, number],
+): Promise<void> {
   const doc = new Document();
   const buffer = doc.createBuffer();
   const position = doc
@@ -107,6 +146,7 @@ async function writeHat(name: string, color: [number, number, number], mesh: Mes
     .setBaseColorFactor([...color, 1])
     .setMetallicFactor(0.05)
     .setRoughnessFactor(0.85);
+  if (emissive) material.setEmissiveFactor(emissive);
   const prim = doc
     .createPrimitive()
     .setAttribute('POSITION', position)
@@ -123,7 +163,12 @@ async function writeHat(name: string, color: [number, number, number], mesh: Mes
 }
 
 // Dimensões pensadas para uma cabeça de ~0.5 de raio (ajuste fino em hats.json).
-const hats: Array<{ name: string; color: [number, number, number]; mesh: Mesh }> = [
+const hats: Array<{
+  name: string;
+  color: [number, number, number];
+  mesh: Mesh;
+  emissive?: [number, number, number];
+}> = [
   {
     name: 'cowboy',
     color: [0.45, 0.29, 0.14],
@@ -158,6 +203,33 @@ const hats: Array<{ name: string; color: [number, number, number]; mesh: Mesh }>
     color: [0.75, 0.12, 0.2],
     mesh: mergeMeshes([cylinder(0.4, 0.46, 0.08, 0), cylinder(0.46, 0.1, 0.1, 0.08)]),
   },
+  {
+    // capacete de garimpeiro: cúpula com aba e crista central
+    name: 'capacete',
+    color: [1.0, 0.78, 0.0],
+    emissive: [0.45, 0.33, 0.0], // o amarelo "aparece" mesmo na sombra
+    mesh: mergeMeshes([
+      cylinder(0.56, 0.52, 0.04, 0), // aba
+      dome(0.46, 0.03), // cúpula
+      translate(cylinder(0.08, 0.06, 0.46, 0), 0, 0.03, 0), // crista
+    ]),
+  },
+  {
+    // boné: copa arredondada + faixa que fecha a base + pala frontal.
+    // A faixa é essencial: a cúpula é uma casca aberta embaixo, e sem ela a
+    // copa parece solta da pala quando vista por trás.
+    name: 'bone',
+    color: [0.13, 0.32, 0.72],
+    emissive: [0.03, 0.08, 0.2],
+    mesh: mergeMeshes([
+      dome(0.46, 0.0), // copa
+      cylinder(0.47, 0.465, 0.11, -0.09), // faixa: fecha a base e ancora a pala
+      // pala na altura da faixa e bem à frente, senão some dentro da cabeça
+      // (a cabeça da capivara é inclinada para a frente)
+      translate(cylinder(0.37, 0.36, 0.05, 0, 24), 0, -0.01, 0.42),
+      translate(cylinder(0.05, 0.05, 0.05, 0, 8), 0, 0.42, 0), // botão do topo
+    ]),
+  },
 ];
 
 const adjustments: Record<string, { position: number[]; rotation: number[]; scale: number }> = {
@@ -166,10 +238,12 @@ const adjustments: Record<string, { position: number[]; rotation: number[]; scal
   tophat: { position: [0, 0, 0], rotation: [0, 0, 0], scale: 1 },
   party: { position: [0, 0.02, 0], rotation: [0, 0, -0.15], scale: 1 },
   beret: { position: [0.03, 0, 0], rotation: [0, 0, -0.2], scale: 1 },
+  capacete: { position: [0, 0, 0], rotation: [0, 0, 0], scale: 1 },
+  bone: { position: [0, -0.02, 0], rotation: [0, 0, 0], scale: 1 },
 };
 
 for (const hat of hats) {
-  await writeHat(hat.name, hat.color, hat.mesh);
+  await writeHat(hat.name, hat.color, hat.mesh, hat.emissive);
 }
 const adjFile = path.join(HATS_DIR, 'hats.json');
 if (!fs.existsSync(adjFile)) {
