@@ -21,7 +21,9 @@ export function TopBar() {
       />
       <span className="spacer" />
       <div className="costline">
-        <span>gasto total</span>
+        <span title="Estimativa de quanto este consumo custaria pela API. Com assinatura não há cobrança por token.">
+          consumo estimado
+        </span>
         <strong>${(cost?.totalUsd ?? 0).toFixed(4)}</strong>
         <span>limite</span>
         {editingBudget === null ? (

@@ -233,6 +233,7 @@ function handleCommand(
     }
     case 'set_budget': {
       manager.cost.setBudget(cmd.budgetUsd);
+      manager.releaseBudgetBlocked();
       ctx.hub.broadcast({ type: 'cost_update', cost: manager.cost.summary() });
       break;
     }

@@ -144,7 +144,9 @@ A interface permite iniciar, pausar, retomar e cancelar execuções, vendo etapa
 
 ### Custo e orçamento
 
-Tokens e custo estimado por instância e por pipeline (preços de `config/models.json`). Defina um limite na barra superior (ou `BUDGET_USD` no `.env`): ao atingi-lo, a execução pausa. Com assinatura, o valor é uma **estimativa de consumo**, não uma cobrança.
+Tokens e custo estimado por instância e por pipeline. O número vem do próprio SDK quando ele o informa; na falta dele, é calculado pelos preços de `config/models.json`.
+
+**Com assinatura (o padrão), não há cobrança por token** — o valor é uma estimativa de quanto aquele consumo custaria pela API, útil para comparar agentes e achar quem está gastando demais. Por isso o limite vem **desligado**: defina um na barra superior (ou `BUDGET_USD` no `.env`) só se estiver usando `ANTHROPIC_API_KEY`. Ao atingir o limite a execução pausa, e ao aumentá-lo ou removê-lo os agentes retomam sozinhos.
 
 ### Persistência
 

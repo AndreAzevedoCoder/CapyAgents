@@ -167,6 +167,12 @@ export class RuntimeManager {
     );
   }
 
+  /** Chamado quando o orçamento muda: destrava quem estava parado por isso. */
+  releaseBudgetBlocked(): void {
+    if (this.cost.exceeded()) return;
+    for (const inst of this.instances.values()) inst.kickIfBlocked();
+  }
+
   allInfos(): InstanceInfo[] {
     return [...this.instances.values()].map((i) => i.toInfo());
   }

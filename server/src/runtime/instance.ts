@@ -195,6 +195,14 @@ export class AgentInstance {
     void this.loop();
   }
 
+  /** Retoma quem parou por limite de gasto, assim que o limite muda. */
+  kickIfBlocked(): void {
+    if (this.state !== 'blocked' || this.paused || this.stopped) return;
+    this.setState(this.queuedCount > 0 ? 'working' : 'idle');
+    this.log('system', 'Limite de gasto ajustado — retomando.');
+    void this.loop();
+  }
+
   pause(): void {
     if (this.stopped) return;
     this.paused = true;
@@ -376,7 +384,7 @@ export class AgentInstance {
           this.sessionId = msg.session_id;
           // o SDK referencia os tipos de usage de um pacote não instalado; o shape é estável
           const usage = msg.usage as unknown as import('../cost/cost.js').UsageLike;
-          const { tokensIn, tokensOut, costUsd } = computeCost(model, usage);
+          const { tokensIn, tokensOut, costUsd } = computeCost(model, usage, msg.total_cost_usd);
           this.tokensIn += tokensIn;
           this.tokensOut += tokensOut;
           this.costUsd += costUsd;
