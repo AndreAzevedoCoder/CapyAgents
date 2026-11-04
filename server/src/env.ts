@@ -10,11 +10,11 @@ export const REPO_DIR = path.resolve(here, '..', '..');
 
 /**
  * Raiz do PROJETO que está sendo executado. Por padrão é a própria plataforma
- * (a demo embutida); defina AGENT_OFFICE_PROJECT para rodar outro projeto, cujas
+ * (a demo embutida); defina CAPYAGENTS_PROJECT para rodar outro projeto, cujas
  * pastas agents/, pipelines/, config/, dados/, saida/ ficam sob essa raiz.
  */
-export const PROJECT_DIR = process.env.AGENT_OFFICE_PROJECT
-  ? path.resolve(process.env.AGENT_OFFICE_PROJECT)
+export const PROJECT_DIR = process.env.CAPYAGENTS_PROJECT
+  ? path.resolve(process.env.CAPYAGENTS_PROJECT)
   : REPO_DIR;
 
 // .env do projeto tem prioridade; cai para o .env da plataforma (chave/login).

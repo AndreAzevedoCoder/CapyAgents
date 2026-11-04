@@ -1,4 +1,4 @@
-import type { AgentLocation } from '@agent-office/shared';
+import type { AgentLocation } from '@capyagents/shared';
 
 /** Layout do escritório: mesas em grade à direita, salas de reunião à esquerda. */
 

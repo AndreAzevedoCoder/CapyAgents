@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { LogKind } from '@agent-office/shared';
+import type { LogKind } from '@capyagents/shared';
 import { useOffice } from '../state/store';
 import { STATE_COLORS, STATE_LABELS } from '../stateColors';
 import { Approval } from './Approvals';

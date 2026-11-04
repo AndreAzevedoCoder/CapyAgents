@@ -1,4 +1,4 @@
-import type { CostSummary, ModelInfo } from '@agent-office/shared';
+import type { CostSummary, ModelInfo } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { kvGet, kvSet, usageTotals } from '../db/database.js';
 

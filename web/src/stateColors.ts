@@ -1,4 +1,4 @@
-import type { AgentState } from '@agent-office/shared';
+import type { AgentState } from '@capyagents/shared';
 
 export const STATE_COLORS: Record<AgentState, string> = {
   idle: '#8ba1b7',

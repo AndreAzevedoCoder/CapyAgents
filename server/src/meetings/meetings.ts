@@ -1,5 +1,5 @@
-import type { Meeting } from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+import type { Meeting } from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { loadMeetings, saveMeeting, saveMeetingTurn } from '../db/database.js';
 import type { Hub } from '../hub.js';

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import * as THREE from 'three';
-import type { InstanceInfo } from '@agent-office/shared';
+import type { InstanceInfo } from '@capyagents/shared';
 import { DESK_COLS, ROOMS, deskCenter } from './positions';
 
 const WOOD = '#c9a876';

@@ -1,7 +1,7 @@
 import { createSdkMcpServer, tool } from '@anthropic-ai/claude-agent-sdk';
 import { z } from 'zod';
-import type { AgentDefinition, InstanceInfo, ModelInfo } from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+import type { AgentDefinition, InstanceInfo, ModelInfo } from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { deleteInstance, loadInstances, saveMessage } from '../db/database.js';
 import { MessageBus } from '../bus/bus.js';

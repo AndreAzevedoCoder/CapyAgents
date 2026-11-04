@@ -1,5 +1,5 @@
 {
-  "name": "@agent-office/server",
+  "name": "@capyagents/server",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@agent-office/shared": "*",
+    "@capyagents/shared": "*",
     "@anthropic-ai/claude-agent-sdk": "^0.1.0",
     "better-sqlite3": "^12.4.1",
     "dotenv": "^16.4.7",

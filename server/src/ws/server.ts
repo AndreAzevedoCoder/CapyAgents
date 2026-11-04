@@ -2,8 +2,8 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { WebSocketServer, WebSocket } from 'ws';
-import type { ClientCommand, ServerEvent, ServerReply } from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+import type { ClientCommand, ServerEvent, ServerReply } from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { getLogs } from '../db/database.js';
 import type { Hub } from '../hub.js';
@@ -11,7 +11,7 @@ import type { RuntimeManager } from '../runtime/manager.js';
 import type { PipelineExecutor } from '../pipelines/executor.js';
 import type { MeetingService } from '../meetings/meetings.js';
 import { saveAgent, deleteAgent, loadAgents } from '../agents/registry.js';
-import type { ModelInfo } from '@agent-office/shared';
+import type { ModelInfo } from '@capyagents/shared';
 import { listHats } from '../http/hats.js';
 import { ASSETS_DIR, HOST, PORT, REPO_DIR } from '../env.js';
 
@@ -112,7 +112,7 @@ export function startServer(ctx: AppContext): http.Server {
   });
 
   server.listen(PORT, HOST, () => {
-    console.log(`Agent Office em http://${HOST}:${PORT}`);
+    console.log(`CapyAgents em http://${HOST}:${PORT}`);
   });
   return server;
 }

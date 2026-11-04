@@ -1,5 +1,5 @@
 import { EventEmitter } from 'node:events';
-import type { ServerEvent } from '@agent-office/shared';
+import type { ServerEvent } from '@capyagents/shared';
 
 /** Hub central de eventos: tudo que o frontend vê passa por aqui. */
 export class Hub extends EventEmitter {

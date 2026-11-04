@@ -6,15 +6,15 @@ import type {
   InstanceInfo,
   ModelInfo,
   ServerEvent,
-} from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+} from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { insertLog, recordUsage, saveInstance } from '../db/database.js';
 import type { MessageBus } from '../bus/bus.js';
 import { checkToolUse, expandToolGroups } from '../permissions/engine.js';
 import { computeCost } from '../cost/cost.js';
 import { agentEnv, ROOT_DIR, WORK_DIR } from '../env.js';
-import type { LogKind } from '@agent-office/shared';
+import type { LogKind } from '@capyagents/shared';
 
 export interface InstanceDeps {
   db: Db;

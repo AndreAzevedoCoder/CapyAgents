@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
-import type { AgentConfig } from '@agent-office/shared';
+import type { AgentConfig } from '@capyagents/shared';
 import {
   checkCanTalkTo,
   checkPaths,

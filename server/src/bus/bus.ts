@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
-import type { BusMessage, BusMessageType } from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+import type { BusMessage, BusMessageType } from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import { newId } from '../ids.js';
 
 /**

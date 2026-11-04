@@ -1,7 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import type { InstanceInfo } from '@agent-office/shared';
+import type { InstanceInfo } from '@capyagents/shared';
 import { avatarPositions } from './AgentAvatar';
 
 const CORD = new THREE.Color('#b07fe0'); // lilás do estado "waiting"/interação

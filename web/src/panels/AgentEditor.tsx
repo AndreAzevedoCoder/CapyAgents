@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import type { AgentConfig } from '@agent-office/shared';
+import type { AgentConfig } from '@capyagents/shared';
 import { useOffice } from '../state/store';
 
 const TOOL_GROUPS = ['read', 'edit', 'bash', 'web'] as const;

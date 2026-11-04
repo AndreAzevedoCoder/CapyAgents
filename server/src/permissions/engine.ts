@@ -1,6 +1,6 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import type { AgentConfig } from '@agent-office/shared';
+import type { AgentConfig } from '@capyagents/shared';
 
 /**
  * Motor de permissões. É a ÚNICA fonte de decisão sobre o que um agente pode

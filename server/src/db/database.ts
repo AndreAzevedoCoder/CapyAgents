@@ -8,7 +8,7 @@ import type {
   MeetingTurn,
   PipelineRun,
   StepRun,
-} from '@agent-office/shared';
+} from '@capyagents/shared';
 import { DATA_DIR } from '../env.js';
 
 export type Db = Database.Database;

@@ -1,4 +1,4 @@
-# Agent Office
+# CapyAgents
 
 Plataforma local e open source para orquestrar agentes Claude em pipelines de software e automação — com um escritório 3D no navegador, estilo Gather, que mostra em tempo real o que cada agente está fazendo.
 
@@ -11,8 +11,8 @@ Cada agente é uma capivara com chapéu. Quando trabalha, a mesa acende; quando 
 Pré-requisitos: Node.js 20+, git e o [Claude Code CLI](https://claude.com/claude-code) logado (`claude login`).
 
 ```bash
-git clone <este-repositorio> agent-office
-cd agent-office
+git clone <este-repositorio> capyagents
+cd capyagents
 cp .env.example .env   # opcional: ajuste porta e limite de gasto
 npm run setup          # instala dependências e gera os assets 3D
 npm run dev            # sobe servidor (4777) e interface (5173)
@@ -50,10 +50,10 @@ Para conferir o motor de permissões: clique em um dev e peça no chat "leia o a
 
 A plataforma é um motor reutilizável: por padrão roda a demo embutida, mas você
 pode apontá-la para outro projeto (com seus próprios `agents/`, `pipelines/` e
-`config/`) pela variável `AGENT_OFFICE_PROJECT`:
+`config/`) pela variável `CAPYAGENTS_PROJECT`:
 
 ```bash
-AGENT_OFFICE_PROJECT=/caminho/do/projeto npm run dev
+CAPYAGENTS_PROJECT=/caminho/do/projeto npm run dev
 ```
 
 Nesse modo, os agentes rodam com o diretório de trabalho na raiz do projeto

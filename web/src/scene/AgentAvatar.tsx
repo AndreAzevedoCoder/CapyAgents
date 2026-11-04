@@ -2,7 +2,7 @@ import { useMemo, useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Billboard, Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
-import type { HatInfo, InstanceInfo } from '@agent-office/shared';
+import type { HatInfo, InstanceInfo } from '@capyagents/shared';
 import { API_BASE } from '../state/store';
 import { STATE_COLORS, STATE_LABELS } from '../stateColors';
 import { useBearTemplate } from './Bear';

@@ -3,8 +3,8 @@ import type {
   PipelineRun,
   PipelineStepDef,
   StepRun,
-} from '@agent-office/shared';
-import { HUMAN } from '@agent-office/shared';
+} from '@capyagents/shared';
+import { HUMAN } from '@capyagents/shared';
 import type { Db } from '../db/database.js';
 import { loadPipelineRuns, savePipelineRun } from '../db/database.js';
 import type { Hub } from '../hub.js';

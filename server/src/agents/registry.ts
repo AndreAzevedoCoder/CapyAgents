@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { z } from 'zod';
-import type { AgentConfig, AgentDefinition, ModelInfo } from '@agent-office/shared';
+import type { AgentConfig, AgentDefinition, ModelInfo } from '@capyagents/shared';
 import { AGENTS_DIR, CONFIG_DIR } from '../env.js';
 
 const configSchema = z

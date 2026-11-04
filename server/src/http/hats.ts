@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { HatInfo } from '@agent-office/shared';
+import type { HatInfo } from '@capyagents/shared';
 import { ASSETS_DIR } from '../env.js';
 
 const HATS_DIR = path.join(ASSETS_DIR, 'hats');

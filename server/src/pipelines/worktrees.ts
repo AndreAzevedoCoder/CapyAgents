@@ -33,7 +33,7 @@ export function ensureWorkspaceRepo(): void {
   if (!fs.existsSync(path.join(WORKSPACE_DIR, '.git'))) {
     git(['init', '-b', 'main']);
     git(['config', 'user.email', 'agents@local']);
-    git(['config', 'user.name', 'Agent Office']);
+    git(['config', 'user.name', 'CapyAgents']);
     fs.writeFileSync(
       path.join(WORKSPACE_DIR, 'README.md'),
       '# Workspace\n\nÁrea de trabalho dos agentes.\n',

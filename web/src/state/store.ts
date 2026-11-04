@@ -13,7 +13,7 @@ import type {
   PipelineRun,
   ServerEvent,
   ServerReply,
-} from '@agent-office/shared';
+} from '@capyagents/shared';
 
 export const API_BASE = import.meta.env.DEV ? 'http://127.0.0.1:4777' : '';
 const WS_URL = import.meta.env.DEV

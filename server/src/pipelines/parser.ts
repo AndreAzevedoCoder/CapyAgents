@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { z } from 'zod';
-import type { PipelineDef } from '@agent-office/shared';
+import type { PipelineDef } from '@capyagents/shared';
 import { PIPELINES_DIR } from '../env.js';
 
 const stepSchema = z

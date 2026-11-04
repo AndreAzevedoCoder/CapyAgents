@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { BusMessage } from '@agent-office/shared';
+import type { BusMessage } from '@capyagents/shared';
 import { useOffice } from '../state/store';
 
 function Approval({ m }: { m: BusMessage }) {

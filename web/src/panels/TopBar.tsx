@@ -12,7 +12,7 @@ export function TopBar() {
   return (
     <div className="topbar panel">
       <span className="wordmark">
-        agent<span className="bee">office</span>
+        capy<span className="bee">agents</span>
       </span>
       <span
         className="conn-dot"

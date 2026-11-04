@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { PipelineDef } from '@agent-office/shared';
+import type { PipelineDef } from '@capyagents/shared';
 import { parsePipeline } from '../src/pipelines/parser.js';
 import { PipelineExecutor } from '../src/pipelines/executor.js';
 import { MessageBus } from '../src/bus/bus.js';
