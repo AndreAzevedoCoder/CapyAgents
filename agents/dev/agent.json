@@ -1,0 +1,15 @@
+{
+  "name": "dev",
+  "model": "claude-sonnet-5",
+  "instances": 2,
+  "hat": "cowboy",
+  "tools": {
+    "allow": ["read", "edit", "bash"],
+    "deny": ["web"],
+    "deny_commands": ["ls", "cat", "find", "grep", "head", "tail", "tree", "less", "more"]
+  },
+  "paths": { "allow": ["./workspace", "./data/worktrees"], "deny": ["./.env"] },
+  "can_talk_to": ["planner", "reviewer", "dev"],
+  "requires_approval_from": { "bash": "reviewer" },
+  "max_turns": 80
+}

@@ -1,0 +1,67 @@
+{
+  "cowboy": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": 1
+  },
+  "wizard": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": 1
+  },
+  "tophat": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": 1
+  },
+  "party": {
+    "position": [
+      0,
+      0.02,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      -0.15
+    ],
+    "scale": 1
+  },
+  "beret": {
+    "position": [
+      0.03,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      -0.2
+    ],
+    "scale": 1
+  }
+}

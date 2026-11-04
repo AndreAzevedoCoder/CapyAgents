@@ -1,0 +1,11 @@
+{
+  "comment": "Lista de modelos disponíveis para os agentes. Adicione novos modelos aqui — nenhuma alteração de código é necessária. Preços em USD por milhão de tokens.",
+  "models": [
+    { "id": "claude-opus-5", "label": "Claude Opus 5", "inputPerMtok": 5.0, "outputPerMtok": 25.0 },
+    { "id": "claude-sonnet-5", "label": "Claude Sonnet 5", "inputPerMtok": 3.0, "outputPerMtok": 15.0 },
+    { "id": "claude-fable-5", "label": "Claude Fable 5", "inputPerMtok": 10.0, "outputPerMtok": 50.0 },
+    { "id": "claude-opus-4-6", "label": "Claude Opus 4.6", "inputPerMtok": 5.0, "outputPerMtok": 25.0 },
+    { "id": "claude-sonnet-4-6", "label": "Claude Sonnet 4.6", "inputPerMtok": 3.0, "outputPerMtok": 15.0 },
+    { "id": "claude-haiku-4-5", "label": "Claude Haiku 4.5", "inputPerMtok": 1.0, "outputPerMtok": 5.0 }
+  ]
+}

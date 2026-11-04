@@ -1,0 +1,11 @@
+{
+  "name": "reviewer",
+  "model": "claude-opus-5",
+  "instances": 1,
+  "hat": "tophat",
+  "tools": { "allow": ["read"], "deny": ["web", "edit", "bash"] },
+  "paths": { "allow": ["./workspace", "./data/worktrees"], "deny": ["./.env"] },
+  "can_talk_to": ["dev", "planner"],
+  "requires_approval_from": {},
+  "max_turns": 60
+}

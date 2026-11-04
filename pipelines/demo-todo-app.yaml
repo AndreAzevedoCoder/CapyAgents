@@ -1,0 +1,90 @@
+name: demo-todo-app
+description: >
+  Demonstração: planner divide o trabalho, dev-1 e dev-2 implementam um pequeno
+  app de tarefas em paralelo (worktrees separadas), o reviewer revisa, faz uma
+  reunião com os devs e o merge é aprovado por você.
+
+steps:
+  - id: plan
+    agent: planner
+    task: |
+      Objetivo do produto: um pequeno app de lista de tarefas (to-do) que roda
+      abrindo um único index.html no navegador, sem dependências externas.
+      Funcionalidades: adicionar tarefa, marcar como concluída, remover, e
+      persistência em localStorage.
+
+      Divida em duas partes paralelas e independentes. IMPORTANTE: cada dev cria
+      os arquivos na RAIZ do próprio diretório de trabalho, com caminhos
+      relativos (ex.: "todo.js"), nunca em subpastas nem em caminhos absolutos.
+      - Parte 1 (dev-1): lógica e persistência em um arquivo todo.js
+        (funções puras + localStorage), mais testes simples em todo.test.js
+        rodáveis com "node todo.test.js".
+      - Parte 2 (dev-2): interface em index.html + style.css, que usa as
+        funções de todo.js pelos nomes que você definir.
+
+      Defina os contratos (nomes exatos de funções e ids de elementos).
+    outputs: [plano]
+    done_when: o plano contém as duas partes e os contratos entre elas
+
+  - id: dev_a
+    agent: dev-1
+    depends_on: [plan]
+    worktree: true
+    retries: 2
+    task: |
+      Implemente a PARTE 1 (dev-1) do plano abaixo, na sua worktree atual.
+      Crie os arquivos com Write usando caminhos RELATIVOS (ex.: "todo.js",
+      "todo.test.js") no seu diretório de trabalho — NUNCA caminhos absolutos
+      nem a pasta compartilhada workspace. Os arquivos ainda não existem: não
+      explore o repositório. Use shell no máximo uma vez, ao final, para o teste.
+
+      {{steps.plan.output}}
+    outputs: [todo.js, todo.test.js]
+    done_when: todo.js e todo.test.js existem e os testes passam
+
+  - id: dev_b
+    agent: dev-2
+    depends_on: [plan]
+    worktree: true
+    retries: 2
+    task: |
+      Implemente a PARTE 2 (dev-2) do plano abaixo, na sua worktree atual.
+      Crie os arquivos com Write usando caminhos RELATIVOS (ex.: "index.html",
+      "style.css") no seu diretório de trabalho — NUNCA caminhos absolutos nem
+      a pasta compartilhada workspace. Não explore o repositório e não use
+      shell. Crie um stub mínimo de todo.js só se precisar para testar o HTML —
+      a versão real virá da Parte 1 no merge.
+
+      {{steps.plan.output}}
+    outputs: [index.html, style.css]
+    done_when: index.html referencia todo.js conforme o contrato do plano
+
+  - id: review
+    agent: reviewer
+    depends_on: [dev_a, dev_b]
+    task: |
+      Revise o código produzido pelos dois devs (as worktrees ficam em
+      ./data/worktrees, nas pastas desta execução). Compare com o plano:
+
+      {{steps.plan.output}}
+
+      Convoque uma reunião curta (request_meeting) com dev-1 e dev-2 para
+      discutir os problemas encontrados e alinhar quem corrige o quê. Se os
+      devs precisarem corrigir algo, peça a eles (send_message) e verifique.
+      Termine com veredito APROVADO ou REPROVADO.
+    outputs: [parecer]
+    done_when: veredito APROVADO presente no parecer
+
+  - id: merge
+    agent: reviewer
+    depends_on: [review, dev_a, dev_b]
+    merge: true
+    human_approval: true
+    task: |
+      O sistema acabou de integrar as branches dos devs na main do workspace
+      (veja o relatório de merge acima). Verifique o resultado integrado em
+      ./workspace: index.html deve referenciar todo.js real, e a estrutura
+      final deve estar consistente com o plano. Liste os arquivos finais e
+      confirme a integração.
+    outputs: [relatorio-final]
+    done_when: a verificação confirma o app integrado na main

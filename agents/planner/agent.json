@@ -1,0 +1,11 @@
+{
+  "name": "planner",
+  "model": "claude-opus-5",
+  "instances": 1,
+  "hat": "wizard",
+  "tools": { "allow": ["read"], "deny": ["web", "bash", "edit"] },
+  "paths": { "allow": ["./workspace", "./data/worktrees"], "deny": ["./.env"] },
+  "can_talk_to": [],
+  "requires_approval_from": {},
+  "max_turns": 40
+}
