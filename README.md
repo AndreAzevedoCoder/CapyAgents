@@ -91,7 +91,7 @@ Cada tipo de agente vive em `agents/<nome>/` com dois arquivos. O `agent.json`:
 }
 ```
 
-- `tools`: grupos `read`, `edit`, `bash`, `web` (deny vence allow); `tools.deny_commands` nega comandos de shell específicos por nome (ex.: `["ls","cat","find"]`) mesmo com `bash` permitido — a negação é local e instantânea, sem passar pelo aprovador, e redireciona o agente para Read/Glob/Grep;
+- `tools`: grupos `read`, `edit`, `bash`, `web` (deny vence allow). O grupo `web` dá acesso à busca, ao WebFetch e à ferramenta `download_file`, que baixa um arquivo preservando os bytes originais (PDF, CSV, planilha) — o WebFetch devolve texto processado e não serve para guardar a fonte. O download é feito pelo servidor, sem shell, e o destino passa pela mesma checagem de `paths`; quem for ler o arquivo depois usa `Read`, que abre PDF nativamente. `tools.deny_commands` nega comandos de shell específicos por nome (ex.: `["ls","cat","find"]`) mesmo com `bash` permitido — a negação é local e instantânea, sem passar pelo aprovador, e redireciona o agente para Read/Glob/Grep;
 - `paths`: caminhos relativos à raiz do projeto; deny vence; symlinks e `..` são resolvidos antes da checagem;
 - `can_talk_to`: com quem o agente pode falar (o humano é sempre permitido);
 - `requires_approval_from`: ferramenta → agente aprovador (ou `human`);

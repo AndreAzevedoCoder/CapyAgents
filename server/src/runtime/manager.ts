@@ -9,6 +9,7 @@ import type { Hub } from '../hub.js';
 import { CostTracker } from '../cost/cost.js';
 import { checkCanTalkTo } from '../permissions/engine.js';
 import { AgentInstance } from './instance.js';
+import { makeFileServer } from './files.js';
 
 /**
  * Gerencia o ciclo de vida das instâncias de agentes, o barramento e o custo.
@@ -159,6 +160,7 @@ export class RuntimeManager {
         resolveTarget: (from, name) => this.resolveTarget(from, name),
         budgetExceeded: () => this.budgetExceededAndNotify(),
         makeBusServer: (instance) => this.makeBusServer(instance),
+        makeFileServer: (instance) => makeFileServer(instance),
         onUsage: () => this.hub.broadcast({ type: 'cost_update', cost: this.cost.summary() }),
       },
       workdir,

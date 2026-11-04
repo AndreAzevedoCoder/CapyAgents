@@ -27,6 +27,8 @@ export interface InstanceDeps {
   budgetExceeded: () => boolean;
   /** Servidor MCP com as ferramentas do barramento para esta instância. */
   makeBusServer: (instance: AgentInstance) => Record<string, unknown>;
+  /** Servidor MCP de coleta de arquivos (download preservando bytes). */
+  makeFileServer: (instance: AgentInstance) => Record<string, unknown>;
   /** Chamado após cada registro de uso (para atualizar custo/orçamento na UI). */
   onUsage?: () => void;
 }
@@ -298,7 +300,12 @@ export class AgentInstance {
       systemPrompt: this.buildSystemPrompt(),
       tools: item.noTools ? [] : this.builtinTools(),
       disallowedTools: ['Task', ...expandToolGroups(config.tools.deny)],
-      mcpServers: item.noTools ? {} : { bus: this.deps.makeBusServer(this) as never },
+      mcpServers: item.noTools
+        ? {}
+        : {
+            bus: this.deps.makeBusServer(this) as never,
+            files: this.deps.makeFileServer(this) as never,
+          },
       maxTurns: item.noTools ? 4 : config.max_turns,
       // Duas camadas de aplicação no backend (o prompt nunca é confiável):
       // 1. PreToolUse intercepta TODA chamada de ferramenta (inclusive as que o

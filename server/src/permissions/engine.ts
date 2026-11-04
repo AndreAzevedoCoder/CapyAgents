@@ -13,7 +13,9 @@ export const TOOL_GROUPS: Record<string, string[]> = {
   read: ['Read', 'Glob', 'Grep', 'LS'],
   edit: ['Edit', 'Write', 'MultiEdit', 'NotebookEdit'],
   bash: ['Bash', 'BashOutput', 'KillShell', 'KillBash'],
-  web: ['WebFetch', 'WebSearch'],
+  // baixar arquivo é acesso à rede: entra no mesmo grupo do WebFetch, e o
+  // destino passa pela checagem de paths como qualquer escrita (file_path)
+  web: ['WebFetch', 'WebSearch', 'mcp__files__download_file'],
 };
 
 /** Ferramentas sempre permitidas: barramento (regulado por can_talk_to) e todo-list interna. */

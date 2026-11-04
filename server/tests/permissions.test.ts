@@ -84,6 +84,33 @@ describe('checkToolUse', () => {
     expect(d.allowed).toBe(false);
   });
 
+  it('download_file exige o grupo web e respeita paths', () => {
+    const comWeb = cfg({
+      tools: { allow: ['web', 'edit'], deny: [], deny_commands: [] },
+      paths: { allow: ['./dados'], deny: ['./saida'] },
+    });
+    const ok = checkToolUse(comWeb, BASE, 'mcp__files__download_file', {
+      url: 'https://exemplo.gov.br/relatorio.pdf',
+      file_path: './dados/relatorio.pdf',
+    });
+    expect(ok.allowed).toBe(true);
+
+    // destino fora de paths.allow é bloqueado como qualquer escrita
+    const fora = checkToolUse(comWeb, BASE, 'mcp__files__download_file', {
+      url: 'https://exemplo.gov.br/relatorio.pdf',
+      file_path: './saida/relatorio.pdf',
+    });
+    expect(fora.allowed).toBe(false);
+
+    // agente sem web não baixa nada
+    const semWeb = cfg({ tools: { allow: ['read', 'edit'], deny: ['web'], deny_commands: [] } });
+    const negado = checkToolUse(semWeb, BASE, 'mcp__files__download_file', {
+      url: 'https://exemplo.gov.br/x.pdf',
+      file_path: './dados/x.pdf',
+    });
+    expect(negado.allowed).toBe(false);
+  });
+
   it('sempre permite as ferramentas do barramento', () => {
     const d = checkToolUse(cfg({ tools: { allow: [], deny: [] } }), BASE, 'mcp__bus__send_message', {});
     expect(d.allowed).toBe(true);
