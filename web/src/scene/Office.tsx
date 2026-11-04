@@ -28,15 +28,40 @@ function Desk({ index, busy }: { index: number; busy: boolean }) {
           <meshStandardMaterial color={WOOD_DARK} roughness={0.9} />
         </mesh>
       ))}
-      {/* tela voltada para o agente (que fica em +z) */}
-      <mesh position={[0, 1.08, -0.25]} rotation={[-0.12, 0, 0]}>
-        <boxGeometry args={[0.9, 0.55, 0.04]} />
-        <meshStandardMaterial
-          color={busy ? '#fff3dd' : '#2a3140'}
-          emissive={busy ? HONEY : '#000000'}
-          emissiveIntensity={busy ? 0.9 : 0}
-        />
-      </mesh>
+      {/* laptop voltado para o agente (que fica em +z): base-teclado + tela */}
+      <group position={[0, 0.76, -0.02]}>
+        {/* base / deck do teclado */}
+        <mesh position={[0, 0.02, 0.06]} castShadow>
+          <boxGeometry args={[0.72, 0.035, 0.46]} />
+          <meshStandardMaterial color="#c3c7cc" metalness={0.5} roughness={0.5} />
+        </mesh>
+        {/* área do teclado (recuo escuro) */}
+        <mesh position={[0, 0.039, 0.09]}>
+          <boxGeometry args={[0.6, 0.006, 0.3]} />
+          <meshStandardMaterial color="#2b2e33" roughness={0.8} />
+        </mesh>
+        {/* trackpad */}
+        <mesh position={[0, 0.04, 0.22]}>
+          <boxGeometry args={[0.18, 0.004, 0.08]} />
+          <meshStandardMaterial color="#9aa0a7" roughness={0.6} />
+        </mesh>
+        {/* tela com leve inclinação para trás (dobradiça na borda de trás) */}
+        <group position={[0, 0.02, -0.16]} rotation={[-0.32, 0, 0]}>
+          <mesh position={[0, 0.23, 0]} castShadow>
+            <boxGeometry args={[0.72, 0.46, 0.022]} />
+            <meshStandardMaterial color="#c3c7cc" metalness={0.5} roughness={0.5} />
+          </mesh>
+          {/* painel do display (voltado ao agente) */}
+          <mesh position={[0, 0.23, 0.013]}>
+            <boxGeometry args={[0.64, 0.39, 0.004]} />
+            <meshStandardMaterial
+              color={busy ? '#fff3dd' : '#2a3140'}
+              emissive={busy ? HONEY : '#0a0d12'}
+              emissiveIntensity={busy ? 1.0 : 0.15}
+            />
+          </mesh>
+        </group>
+      </group>
       {/* brilho de mel no chão quando está trabalhando */}
       {busy && (
         <mesh position={[0, 0.012, 0.5]} rotation={[-Math.PI / 2, 0, 0]}>

@@ -4,7 +4,7 @@ import { Billboard, Text, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import type { HatInfo, InstanceInfo } from '@agent-office/shared';
 import { API_BASE } from '../state/store';
-import { STATE_COLORS } from '../stateColors';
+import { STATE_COLORS, STATE_LABELS } from '../stateColors';
 import { useBearTemplate } from './Bear';
 import { spotFor } from './positions';
 
@@ -12,6 +12,72 @@ import { spotFor } from './positions';
 export const avatarPositions = new Map<string, THREE.Vector3>();
 
 const WALK_SPEED = 3.2; // unidades/s — reflete eventos reais, nunca é decorativo
+
+/**
+ * Placa de nome/status no estilo Minecraft: painel escuro semitransparente com
+ * o nome em branco e o status na cor do estado. Billboard (de frente para a
+ * câmera) e desenhada por cima da cena (não fica oculta por mesas/capivaras).
+ */
+function Nametag({
+  id,
+  label,
+  statusColor,
+  queued,
+  dimmed,
+  y,
+}: {
+  id: string;
+  label: string;
+  statusColor: string;
+  queued: number;
+  dimmed: boolean;
+  y: number;
+}) {
+  const bottom = queued > 0 ? `${label} · ✉${queued}` : label;
+  const chars = Math.max(id.length, bottom.length);
+  const width = chars * 0.142 + 0.34;
+  return (
+    <Billboard position={[0, y, 0]}>
+      {/* painel escuro translúcido */}
+      <mesh renderOrder={10}>
+        <planeGeometry args={[width, 0.66]} />
+        <meshBasicMaterial
+          color="#0b0e15"
+          transparent
+          opacity={dimmed ? 0.4 : 0.58}
+          depthTest={false}
+          depthWrite={false}
+        />
+      </mesh>
+      <Text
+        position={[0, 0.13, 0.01]}
+        fontSize={0.26}
+        color={dimmed ? '#b7b7b2' : '#ffffff'}
+        anchorX="center"
+        anchorY="middle"
+        renderOrder={11}
+        material-depthTest={false}
+        material-depthWrite={false}
+        material-transparent
+      >
+        {id}
+      </Text>
+      <Text
+        position={[0, -0.16, 0.01]}
+        fontSize={0.17}
+        color={statusColor}
+        anchorX="center"
+        anchorY="middle"
+        renderOrder={11}
+        material-depthTest={false}
+        material-depthWrite={false}
+        material-transparent
+      >
+        {bottom}
+      </Text>
+    </Billboard>
+  );
+}
 
 function Hat({
   hat,
@@ -58,6 +124,10 @@ export function AgentAvatar({
   const body = useRef<THREE.Group>(null);
   const walking = useRef(false);
   const heading = useRef(0);
+  // deslocamento de fase por agente, para as animações não ficarem em sincronia
+  const phase = useRef(
+    [...info.id].reduce((a, c) => a + c.charCodeAt(0), 0) % 628 / 100,
+  );
 
   const spot = spotFor(info.location);
   const target = useMemo(
@@ -91,30 +161,44 @@ export function AgentAvatar({
 
     avatarPositions.set(info.id, g.position);
 
-    // animação procedural (o GLB não tem esqueleto)
+    // animação procedural (o GLB não tem esqueleto); fase por agente p/ dessincronizar
+    const ph = phase.current;
     if (walking.current) {
-      b.position.y = Math.abs(Math.sin(t * 9)) * 0.09;
-      b.rotation.z = Math.sin(t * 9) * 0.06;
-      b.rotation.x = 0.06;
+      b.position.y = Math.abs(Math.sin(t * 9 + ph)) * 0.12;
+      b.rotation.z = Math.sin(t * 9 + ph) * 0.09;
+      b.rotation.x = 0.08;
+      b.rotation.y = 0;
+      b.scale.setScalar(1);
     } else if (info.state === 'working' || info.state === 'in_meeting') {
-      // "digitando"/conversando: inclinado, balanço curto e rápido
-      b.position.y = Math.sin(t * 7) * 0.015;
-      b.rotation.x = 0.1 + Math.sin(t * 7) * 0.02;
-      b.rotation.z = 0;
+      // "digitando": bicadas ritmadas para frente, inclinando sobre o laptop
+      const k = t * 6.5 + ph;
+      const peck = Math.max(0, Math.sin(k)); // 0..1, só a descida
+      b.rotation.x = 0.12 + peck * 0.26; // mergulha a cabeça para o teclado
+      b.position.y = -peck * 0.06; // afunda um pouco a cada bicada
+      b.rotation.z = Math.sin(k * 0.5) * 0.05; // balanço lateral leve
+      b.rotation.y = 0;
+      b.scale.setScalar(1);
     } else if (info.state === 'waiting') {
-      // olhando em volta, esperando resposta
-      b.position.y = Math.sin(t * 2) * 0.02;
+      // olhando em volta, impaciente, esperando resposta
+      b.position.y = Math.sin(t * 2.2 + ph) * 0.035;
       b.rotation.x = 0;
-      b.rotation.z = 0;
-      b.rotation.y = Math.sin(t * 1.6) * 0.35;
+      b.rotation.z = Math.sin(t * 1.1 + ph) * 0.06;
+      b.rotation.y = Math.sin(t * 1.4 + ph) * 0.45;
+      b.scale.setScalar(1);
       return;
     } else {
-      // respiração em idle
-      b.position.y = Math.sin(t * 2) * 0.025;
+      // respiração em idle: sobe-e-desce amplo + squash/stretch + balanço suave
+      const br = Math.sin(t * 1.7 + ph);
+      b.position.y = br * 0.06;
+      b.scale.y = 1 + br * 0.04;
+      b.scale.x = 1 - br * 0.025;
+      b.scale.z = 1 - br * 0.025;
       b.rotation.x = 0;
-      b.rotation.z = 0;
+      b.rotation.z = Math.sin(t * 0.9 + ph) * 0.05;
+      b.rotation.y = 0;
+      return;
     }
-    b.rotation.y = 0;
+    b.scale.setScalar(1);
   });
 
   const color = STATE_COLORS[info.state];
@@ -143,32 +227,23 @@ export function AgentAvatar({
         )}
       </group>
 
-      {/* nome + estado, sempre voltados para a câmera */}
-      <Billboard position={[0, bear.headY + 0.78, 0]}>
-        <Text
-          fontSize={0.26}
-          color={dimmed ? '#8b8b86' : '#2a2a26'}
-          outlineWidth={0.012}
-          outlineColor="#f5f1e6"
-          anchorY="bottom"
-        >
-          {info.id}
-        </Text>
-        <mesh position={[0, -0.14, 0]}>
-          <circleGeometry args={[0.07, 16]} />
-          <meshBasicMaterial color={color} />
-        </mesh>
-        {info.state === 'waiting' && (
-          <Text position={[0.22, -0.14, 0]} fontSize={0.2} color="#b07fe0" anchorY="middle">
+      {/* placa de nome + status no estilo Minecraft: texto claro sobre painel
+          escuro translúcido, sempre de frente para a câmera e sempre visível */}
+      <Nametag
+        id={info.id}
+        label={STATE_LABELS[info.state]}
+        statusColor={color}
+        queued={info.queuedMessages}
+        dimmed={dimmed}
+        y={bear.headY + 0.62}
+      />
+      {info.state === 'waiting' && (
+        <Billboard position={[0, bear.headY + 1.18, 0]}>
+          <Text fontSize={0.34} color="#b07fe0" anchorY="middle" renderOrder={12}>
             ?
           </Text>
-        )}
-        {info.queuedMessages > 0 && (
-          <Text position={[-0.26, -0.14, 0]} fontSize={0.16} color="#6b7686" anchorY="middle">
-            {`✉ ${info.queuedMessages}`}
-          </Text>
-        )}
-      </Billboard>
+        </Billboard>
+      )}
 
       {/* anel de seleção */}
       {selected && (
