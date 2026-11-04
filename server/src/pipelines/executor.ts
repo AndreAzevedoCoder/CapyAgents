@@ -53,27 +53,37 @@ export class PipelineExecutor {
     return [...stored, ...live.values()];
   }
 
-  /** Execuções interrompidas por reinício ficam pausadas, retomáveis. */
+  /**
+   * Retoma o que ficou pelo caminho num reinício.
+   *
+   * Etapas concluídas continuam concluídas; só a que estava no ar volta para
+   * a fila, e o agente a refaz com a sessão dele restaurada, ou seja,
+   * lembrando do que já tinha feito e com os arquivos ainda em disco.
+   *
+   * Quem estava rodando volta a rodar sozinho. Só continua pausado o que VOCÊ
+   * pausou — reiniciar o servidor não é uma decisão de parar o trabalho.
+   */
   restore(): void {
     for (const run of loadPipelineRuns(this.db)) {
       if (run.status !== 'running' && run.status !== 'paused') continue;
       const def = this.defs.get(run.pipeline);
       if (!def) continue;
-      // etapas que estavam rodando voltam para pendente (o turno se perdeu)
+      const pausadaPeloUsuario = run.status === 'paused';
+      // o turno em voo se perdeu com o processo: a etapa volta para a fila
       for (const s of run.steps) {
         if (s.status === 'running' || s.status === 'waiting_approval') s.status = 'pending';
       }
-      run.status = 'paused';
       const ctx: RunCtx = {
         run,
         def,
-        paused: true,
+        paused: pausadaPeloUsuario,
         cancelled: false,
         worktrees: new Map(),
         busy: new Set(),
       };
       this.runs.set(run.id, ctx);
       this.persist(ctx);
+      if (!pausadaPeloUsuario) void this.tick(ctx);
     }
   }
 

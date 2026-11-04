@@ -118,8 +118,8 @@ function fakeInstance(
   return inst;
 }
 
-function makeExecutor(defs: PipelineDef[], instances: FakeInstance[]) {
-  const db = openDb(':memory:');
+function makeExecutor(defs: PipelineDef[], instances: FakeInstance[], dbExistente?: any) {
+  const db = dbExistente ?? openDb(':memory:');
   const hub = new Hub();
   const bus = new MessageBus(5_000);
   const manager = {
@@ -265,5 +265,47 @@ describe('executor de pipelines', () => {
     const finished = await waitStatus(executor, run.id, ['done', 'failed']);
     expect(finished.status).toBe('done');
     expect(finished.steps[0].attempts).toBe(2);
+  });
+
+  it('reinício retoma sozinho o que estava rodando, preservando o que já terminou', async () => {
+    const def: PipelineDef = {
+      name: 'p',
+      description: '',
+      steps: [
+        step({ id: 'a', agent: 'dev', task: 'primeira' }),
+        step({ id: 'b', agent: 'dev', task: 'segunda', depends_on: ['a'] }),
+      ],
+    };
+    // trava a etapa b para o "reinício" acontecer com ela no ar
+    let segurar = true;
+    const dev = fakeInstance('dev-1', 'dev', async (prompt) => {
+      if (prompt.includes('segunda')) {
+        while (segurar) await new Promise((r) => setTimeout(r, 10));
+      }
+      return 'ok';
+    });
+    const primeiro = makeExecutor([def], [dev]);
+    const run = primeiro.executor.start('p');
+    // espera a etapa b estar rodando
+    for (let i = 0; i < 200; i++) {
+      const r = primeiro.executor.allRuns().find((x) => x.id === run.id)!;
+      if (r.steps.find((s) => s.stepId === 'b')?.status === 'running') break;
+      await new Promise((r2) => setTimeout(r2, 20));
+    }
+
+    // "reinicia": executor novo sobre o MESMO banco
+    segurar = false;
+    const dev2 = fakeInstance('dev-1', 'dev');
+    const segundo = makeExecutor([def], [dev2], primeiro.db);
+    segundo.executor.restore();
+
+    const depois = segundo.executor.allRuns().find((x) => x.id === run.id)!;
+    // a etapa concluída continua concluída — não é refeita
+    expect(depois.steps.find((s) => s.stepId === 'a')!.status).toBe('done');
+    // e a execução volta a andar sozinha, sem precisar de "retomar"
+    expect(depois.status).toBe('running');
+    const fim = await waitStatus(segundo.executor, run.id, ['done', 'failed']);
+    expect(fim.status).toBe('done');
+    expect(dev2.calls.some((c) => c.prompt.includes('primeira'))).toBe(false);
   });
 });
